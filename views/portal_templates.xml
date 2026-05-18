@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Botón en el home del portal (/my) -->
+    <template id="portal_my_home_menu_encuestas"
+              name="Portal: botón Encuestas"
+              inherit_id="portal.portal_my_home"
+              priority="30">
+        <xpath expr="//div[@id='portal_client_category']" position="before">
+            <t t-set="portal_client_category_enable" t-value="True"/>
+        </xpath>
+        <xpath expr="//div[@id='portal_client_category']" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Encuestas</t>
+                <t t-set="url">/my/encuestas</t>
+                <t t-set="count" t-value="encuestas_count"/>
+                <t t-set="placeholder_count">encuestas_count</t>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Listado de encuestas del usuario (/my/encuestas) -->
+    <template id="portal_my_encuestas" name="Mis Encuestas">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Encuestas</t>
+            </t>
+            <t t-if="not encuestas_data">
+                <div class="alert alert-info mt-3">
+                    <p class="mb-0">No hay encuestas disponibles.</p>
+                </div>
+            </t>
+            <t t-if="encuestas_data">
+                <div class="table-responsive mt-4">
+                    <table class="table table-hover o_portal_my_doc_table">
+                        <thead>
+                            <tr class="active">
+                                <th>Encuesta</th>
+                                <th>Fecha</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="encuestas_data" t-as="item">
+                                <tr>
+                                    <td class="align-middle">
+                                        <span t-out="item['survey_id']"/>
+                                    </td>
+                                    <td class="align-middle">
+                                        <span t-out="item['date']"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <a t-attf-href="/my/encuestas/#{item['survey_id']}.pdf"
+                                           class="btn btn-sm btn-primary"
+                                           target="_blank">
+                                            <i class="fa fa-file-pdf-o me-1"/>
+                                            Ver PDF
+                                        </a>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>
