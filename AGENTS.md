@@ -84,5 +84,8 @@ Si se agrega una dependencia nueva, actualizar `__manifest__.py` y este archivo.
 - [ ] `__init__.py` importa todos los subdirectorios con módulos nuevos
 - [ ] Ningún método nuevo usa `sudo()` sin justificación documentada
 - [ ] Los templates XML usan `t-out` en lugar de `t-esc`
-- [ ] El CHANGELOG.md fue actualizado con el prompt que motivó el cambio
+- [ ] El CHANGELOG.md fue actualizado con el prompt que motivó el cambio **y con
+  las discusiones de diseño relevantes**: alternativas evaluadas, decisiones
+  tomadas y motivos de descarte. No alcanza con listar qué se cambió; hay que
+  registrar el razonamiento que llevó a esa solución.
 - [ ] No se introducen rutas sin `auth='user'` (este módulo no tiene rutas públicas)
