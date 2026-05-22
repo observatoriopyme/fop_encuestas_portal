@@ -4,64 +4,50 @@ from odoo.addons.portal.controllers.portal import CustomerPortal
 
 
 class EncuestasPortal(CustomerPortal):
-
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
-        if 'encuestas_count' in counters:
-            values['encuestas_count'] = len(self._get_user_encuestas())
+        if 'surveys_count' in counters:
+            values['surveys_count'] = len(self._get_user_surveys())
         return values
 
-    def _get_encuestas_folder(self):
-        return request.env['documents.folder'].sudo().search(
-            [('name', '=', 'Encuestas')], limit=1
-        )
+    def _get_surveys_folder(self):
+        Folder = request.env['documents.folder'].sudo()
+        for lang, name in (('es_AR', 'Encuestas'), ('en_US', 'Surveys')):
+            folder = Folder.with_context(lang=lang).search([('name', '=ilike', name)], limit=1)
+            if folder:
+                return folder
+        return Folder.browse()
 
-    def _get_user_encuestas(self):
-        user_login = request.env.user.login
-        folder = self._get_encuestas_folder()
+    def _get_user_surveys(self):
+        folder = self._get_surveys_folder()
         if not folder:
-            return request.env['documents.document'].sudo().browse()
-        return request.env['documents.document'].sudo().search([
+            return request.env['documents.document'].browse()
+        return request.env['documents.document'].search([
             ('folder_id', '=', folder.id),
-            ('name', '=ilike', f'{user_login}@%.pdf'),
         ])
-
-    def _parse_survey_id(self, doc_name, user_login):
-        """Extract survey ID from document name: [login]@[survey_id].pdf"""
-        prefix = f'{user_login}@'
-        name = doc_name[len(prefix):] if doc_name.lower().startswith(prefix.lower()) else doc_name
-        return name[:-4] if name.lower().endswith('.pdf') else name
 
     @http.route(['/my/encuestas'], type='http', auth='user', website=True)
     def portal_my_encuestas(self, **kw):
         values = self._prepare_portal_layout_values()
-        encuestas = self._get_user_encuestas()
-        user_login = request.env.user.login
-        encuestas_data = []
-        for doc in encuestas:
-            survey_id = self._parse_survey_id(doc.name, user_login)
-            encuestas_data.append({
-                'doc': doc,
-                'survey_id': survey_id,
+        surveys = self._get_user_surveys()
+        survey_documents_data = []
+        for i, doc in enumerate(surveys, start=1):
+            token = doc.sudo().attachment_id.generate_access_token()[0]
+            survey_documents_data.append({
+                'label': f'Encuesta #{i}',
                 'date': doc.write_date.strftime('%d/%m/%Y') if doc.write_date else '',
+                'url': f'/my/encuestas/{token}',
             })
         values.update({
-            'encuestas_data': encuestas_data,
-            'page_name': 'encuestas',
+            'surveys_data': survey_documents_data,
+            'page_name': 'surveys',
         })
-        return request.render('fop_encuestas_portal.portal_my_encuestas', values)
+        return request.render('fop_encuestas_portal.portal_my_surveys_list', values)
 
-    @http.route(['/my/encuestas/<string:survey_id>.pdf'], type='http', auth='user', website=True)
-    def portal_my_encuesta_pdf(self, survey_id, **kw):
-        user_login = request.env.user.login
-        folder = self._get_encuestas_folder()
-        if not folder:
-            return request.not_found()
-
-        doc_name = f'{user_login}@{survey_id}.pdf'
+    @http.route(['/my/encuestas/<string:access_token>'], type='http', auth='user', website=True)
+    def portal_my_survey_pdf(self, access_token):
         document = request.env['documents.document'].sudo().search([
-            ('folder_id', '=', folder.id),
-            ('name', '=ilike', doc_name),
+            ('attachment_id.access_token', '=', access_token),
         ], limit=1)
 
         if not document:
@@ -70,3 +56,4 @@ class EncuestasPortal(CustomerPortal):
         return request.env['ir.binary']._get_stream_from(
             document, field_name='raw', filename=document.name
         ).get_response(as_attachment=False)
+

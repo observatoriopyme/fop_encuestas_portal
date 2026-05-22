@@ -12,7 +12,9 @@
         'documents',
     ],
     'data': [
-        'views/portal_templates.xml',
+        'security/ir.model.access.csv',
+        'security/document_user_rule.xml',
+        'views/fop_encuestas_my_surveys.xml',
     ],
     'installable': True,
     'application': False,
