@@ -9,6 +9,17 @@ para trazabilidad completa del razonamiento de agentes de IA.
 
 ---
 
+## [17.0.1.2.1] — 2026-07-16
+
+### Modificado
+
+- `AGENTS.md`: referencia a la sección del AGENTS.md raíz de `fop-odoo` corregida
+  (Sección 17 -> Sección 10), tras la reestructuración de ese documento.
+- `__manifest__.py`: version corregida a `17.0.1.2.1`; estaba desactualizada
+  en `17.0.1.0.0` pese a que el CHANGELOG ya documentaba la version `17.0.1.2.0`.
+
+---
+
 ## [17.0.1.2.0] — 2026-05-18
 
 ### Prompt
