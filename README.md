@@ -11,20 +11,20 @@ Addon de Odoo 17 que permite a los usuarios autenticados del website ver las enc
 
 Los documentos PDF de encuestas deben estar cargados en el módulo Documents:
 
-- **Carpeta**: `Encuestas`
-- **Nombre del archivo**: `[login_del_usuario]@[ID_de_la_encuesta].pdf`
+- **Carpeta**: `Encuestas` (idioma `es_AR`) o `Surveys` (idioma `en_US`).
+- **`partner_id` del documento**: debe apuntar al contacto del usuario portal
+  que debe poder verlo. El control de acceso se basa en esto (regla de
+  registro `ir.rule` sobre `documents.document`, no en el nombre del archivo).
 
-  Ejemplo: `juan.perez@ENCUESTA-2024-001.pdf`
-
-Cada usuario solo puede ver y descargar las encuestas cuyo nombre de archivo comienza con su login.
-El control de acceso está basado en la convención de nombre de archivo.
+Cada usuario portal solo puede ver los documentos de esa carpeta cuyo
+`partner_id` coincide con su propio contacto.
 
 ## URLs
 
 | URL | Descripción |
 |-----|-------------|
 | `/my/encuestas` | Listado de encuestas del usuario autenticado |
-| `/my/encuestas/<ID>.pdf` | Descarga/visualización del PDF de la encuesta |
+| `/my/encuestas/<access_token>` | Visualización inline del PDF de una encuesta (el link se genera automáticamente desde el listado) |
 
 El botón "Encuestas" aparece en la sección "Mi" del portal (`/my`).
 
@@ -35,4 +35,5 @@ El botón "Encuestas" aparece en la sección "Mi" del portal (`/my`).
 
 ## Configuración
 
-Crear en Documents una carpeta llamada exactamente `Encuestas` y subir los PDFs con el formato de nombre indicado.
+Crear en Documents una carpeta llamada `Encuestas` (o `Surveys`) y subir los
+PDFs asignando el `partner_id` del contacto correspondiente a cada documento.
