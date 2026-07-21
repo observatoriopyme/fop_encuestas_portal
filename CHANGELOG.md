@@ -9,6 +9,70 @@ para trazabilidad completa del razonamiento de agentes de IA.
 
 ---
 
+## [17.0.1.3.0] — 2026-07-20
+
+### Prompt
+
+> Auditoría del addon `fop_encuestas_portal`: revisar `DESIGN.md` en busca de
+> pendientes, comparar `git log` contra `CHANGELOG.md`, y buscar `TODO/FIXME/XXX`
+> en el código para detectar trabajo no documentado.
+
+### Discusión de diseño
+
+- La auditoría detectó que los commits `fd5b2e6` ("refactor fop_encuestas_portal
+  component", 2026-05-21) y `a5fa9da` ("Update documentation", 2026-05-20)
+  nunca tuvieron entrada de CHANGELOG ni bump de versión (el manifest quedó
+  clavado en `17.0.1.0.0` hasta que `86017f8` lo corrigió recién a
+  `17.0.1.2.1`, sin relación con el contenido real de esos commits).
+- `fd5b2e6` cambió el mecanismo de control de acceso de punta a punta: de la
+  convención de nombre de archivo (`[login]@[ID].pdf` + filtro `=ilike`) a una
+  `ir.rule` por `partner_id` sobre `documents.document` para el grupo
+  `base.group_portal` — exactamente la alternativa que el diseño original
+  (`17.0.1.0.0`) había evaluado y descartado. El razonamiento específico de
+  ese cambio de rumbo no quedó registrado en su momento (el mensaje de commit
+  es genérico); esta entrada documenta retroactivamente **qué** cambió,
+  aunque no se pueda reconstruir con certeza el **por qué**.
+- Como consecuencia, `DESIGN.md`, `AGENTS.md` y `README.md` describían una
+  arquitectura (control de acceso por nombre, URL `/my/encuestas/<survey_id>.pdf`,
+  métodos `_get_encuestas_folder`/`_get_user_encuestas`/`_parse_survey_id`) que
+  ya no existe en el código desde mayo de 2026. Se reescribieron las tres para
+  reflejar el estado real: búsqueda de carpeta bilingüe (`Encuestas`/`Surveys`),
+  acceso por `ir.rule` + ACL de portal, y servicio del PDF por `access_token`
+  de `ir.attachment` en lugar de `survey_id` derivado del nombre.
+- Se detectó además que `models/ir_http.py` (agregado en `fd5b2e6`) registra
+  `fop_dashboard_coyuntural` en `_get_translation_frontend_modules_name`, sin
+  relación aparente con este addon — probablemente un arrastre de copiar/pegar
+  desde otro módulo. Se documenta como pendiente de revisión en
+  `DESIGN.md` (sección "Extensibilidad futura"); no se corrige en este commit
+  porque requiere confirmar la intención original antes de tocar código
+  funcional.
+- No se modifica el bloque `### Discusión de diseño` de `17.0.1.0.0`
+  (mantiene el análisis original de alternativas); la tabla "Decisiones
+  descartadas" de `DESIGN.md` se anota para indicar que `partner_id` pasó de
+  descartada a adoptada.
+
+### Modificado
+
+- `DESIGN.md`: sección de control de acceso reescrita (`ir.rule` por
+  `partner_id` en vez de convención de nombre), tabla de métodos del
+  controlador actualizada (`_get_surveys_folder`, `_get_user_surveys`,
+  `portal_my_survey_pdf`), URL del PDF documentada como `access_token`,
+  tabla de "Decisiones descartadas" anotada con el estado actual, nota sobre
+  `models/ir_http.py` agregada en "Extensibilidad futura".
+- `AGENTS.md`: sección "Contexto del Módulo" actualizada (URLs, carpeta
+  bilingüe, mecanismo de acceso); "Reglas de Oro" actualizada (uso real de
+  `sudo()` por método, seguridad basada en `ir.rule`/ACL); "Estructura del
+  Módulo" actualizada para incluir `models/`, `security/`, `i18n/` y el
+  archivo de vistas renombrado (`fop_encuestas_my_surveys.xml`).
+- `README.md`: instrucciones de configuración actualizadas (carpeta
+  bilingüe, asignar `partner_id` en vez de nombrar el archivo con el login,
+  URL del PDF por `access_token`).
+- `__manifest__.py`: version `17.0.1.2.1` → `17.0.1.3.0` (cambio de MENOR:
+  se documenta retroactivamente un cambio de arquitectura real que nunca
+  tuvo su propio número de versión).
+
+---
+
 ## [17.0.1.2.1] — 2026-07-16
 
 ### Modificado
