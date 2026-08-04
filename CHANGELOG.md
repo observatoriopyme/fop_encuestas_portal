@@ -9,7 +9,35 @@ para trazabilidad completa del razonamiento de agentes de IA.
 
 ---
 
-## [17.0.1.3.0] — 2026-07-20
+## [17.0.1.3.1] — 2026-08-04
+
+### Prompt
+
+> Cross-check de una corrida completa de tests de los 41 addons contra la
+> lista de bugs conocidos del repo, resolviendo los más simples. Uno de
+> ellos era justamente este cross-ref sospechoso, documentado como
+> pendiente desde la auditoría del `17.0.1.3.0`.
+
+### Discusión de diseño
+
+- Confirmado: `models/ir_http.py` era un arrastre de copiar/pegar de
+  `fop_odoo_community/models/ir_http.py` (mismo patrón exacto,
+  `_get_translation_frontend_modules_name`) sin cambiar el nombre del
+  módulo agregado a la lista -- debía decir `'fop_encuestas_portal'`, no
+  `'fop_dashboard_coyuntural'`.
+- Peor todavía: el `__init__.py` de nivel superior del addon solo hacía
+  `from . import controllers` -- nunca importaba `models`, así que este
+  override jamás se ejecutó ni una sola vez desde que se agregó. Cero
+  impacto funcional, confirmado también que el addon no depende de
+  `fop_dashboard_coyuntural` y no tiene JS de frontend propio para
+  traducir.
+- Se eliminó el archivo completo en vez de corregir el nombre del módulo
+  porque no cumplía ningún propósito real (nada que registrar).
+
+### Eliminado
+
+- `models/ir_http.py` y `models/__init__.py` (quedaba vacío/sin
+  propósito una vez sacado el único import).
 
 ### Prompt
 

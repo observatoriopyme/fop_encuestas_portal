@@ -1,6 +1,6 @@
 {
     'name': 'FOP Encuestas Portal',
-    'version': '17.0.1.3.0',
+    'version': '17.0.1.3.1',
     'category': 'Website/Portal',
     'summary': 'Portal para que los usuarios autenticados vean sus encuestas en Documents',
     'author': 'Observatorio PyME',

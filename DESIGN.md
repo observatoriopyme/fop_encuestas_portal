@@ -142,7 +142,3 @@ Usuario autenticado accede a /my
   `child_of` en el dominio.
 - **Paginación**: Si el volumen de encuestas por usuario crece, agregar
   `portal_pager` siguiendo el patrón estándar de Odoo.
-- **Traducciones frontend**: `models/ir_http.py` extiende
-  `_get_translation_frontend_modules_name`; revisar si el módulo agregado
-  (`fop_dashboard_coyuntural`) es intencional o un arrastre de otro addon,
-  ya que no guarda relación evidente con encuestas/portal.
