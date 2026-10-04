@@ -9,6 +9,24 @@ para trazabilidad completa del razonamiento de agentes de IA.
 
 ---
 
+## [17.0.1.3.2] - 2026-10-03
+
+### Prompt
+
+> Sigue con los AGENTS.md
+>
+> (continuación de: "Arregla toda la documentación que haya quedado pendiente de sincronizar")
+
+### Discusión de diseño
+
+- **Contenido**: se revisó contra el código actual y contra la ficha `docs/modules/fop_encuestas_portal.md` (verificada contra el código el mismo día); se corrigió solo lo que había quedado falso u obsoleto.
+
+### Cambiado
+
+- `AGENTS.md`: Se eliminó `models/ir_http.py` y el directorio `models/` del árbol (removidos en 17.0.1.3.1), con nota y puntero a la ficha docs/modules; se aclara que `sudo()` también se usa en `portal_my_encuestas` para generar el token.
+
+---
+
 ## [17.0.1.3.1] — 2026-08-04
 
 ### Prompt

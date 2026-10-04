@@ -29,7 +29,7 @@ Antes de proponer cualquier cambio, el agente debe validar:
   `@api.onchange` de Odoo 17. No uses APIs deprecadas de versiones anteriores.
 - **sudo() con criterio**: `sudo()` está permitido en `_get_surveys_folder`
   (folders no son sensibles) y en `portal_my_survey_pdf` (la búsqueda es por
-  `access_token`, no por pertenencia). `_get_user_surveys` **no** usa `sudo()`
+  `access_token`, no por pertenencia) y para generar el token en `portal_my_encuestas`. `_get_user_surveys` **no** usa `sudo()`
   a propósito: el control de acceso real lo impone la `ir.rule` sobre
   `documents.document` para el grupo `base.group_portal`. No amplíes el uso
   de `sudo()` a otros contextos sin justificación explícita.
@@ -49,9 +49,6 @@ fop_encuestas_portal/
 ├── controllers/
 │   ├── __init__.py
 │   └── portal.py                    # Extiende CustomerPortal
-├── models/
-│   ├── __init__.py
-│   └── ir_http.py                   # Extiende ir.http (traducciones frontend)
 ├── security/
 │   ├── ir.model.access.csv
 │   └── document_user_rule.xml       # ir.rule por partner_id (grupo portal)
@@ -65,6 +62,8 @@ fop_encuestas_portal/
 ├── DESIGN.md
 └── README.md
 ```
+
+No hay `models/` (el override de `ir.http` se eliminó en 17.0.1.3.1). Ficha técnica completa: `docs/modules/fop_encuestas_portal.md` del repo raíz.
 
 ## 4. Convenciones de Código
 
